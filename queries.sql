@@ -93,3 +93,14 @@ SELECT student_name, department, marks_obtained,
        DENSE_RANK() OVER (PARTITION BY department ORDER BY marks_obtained DESC) as dense_rank
 FROM Students s
 JOIN Enrollments e ON s.student_id = e.student_id;
+
+-- a. Safe transfer transaction
+BEGIN;
+DELETE FROM Enrollments WHERE student_id = 1 AND course_code = 'CS101';
+INSERT INTO Enrollments (student_id, course_code, marks_obtained)
+VALUES (1, 'CS404', 0);
+COMMIT;
+
+-- b. Non-repeatable read → READ COMMITTED or higher
+-- c. Phantom read / Lost update → SERIALIZABLE
+-- d. MVCC → REPEATABLE READ or SERIALIZABLE (consistent snapshot)
